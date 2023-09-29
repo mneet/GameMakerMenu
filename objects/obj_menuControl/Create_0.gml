@@ -25,6 +25,7 @@ anim_val = 0;
 mouse_flag = false;
 animar_flag = false;
 mouse_click = false;
+mouse_alt = 0;
 
 //Controlando a página do menu
 pag = 0;
@@ -39,6 +40,7 @@ menu_draw = function(_menu)
 	draw_set_font(fnt_menu);
 	static _animar = false;
 	var _mouse_align, _mouse_sel_flag;
+	
 	// Definindo alinhamento com base no menu atual
 	switch(pag)
 	{
@@ -83,6 +85,7 @@ menu_draw = function(_menu)
 		var _larg_txt = string_width(_texto);
 		_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _larg_txt, _espaco_y, _mouse_align)
 		
+		// Se o mouse está em cima e não seja a mesma opção
 		if (_mouse_sel_flag && menus_sel[pag] != i) 
 		{
 			animar_flag = true;
@@ -113,8 +116,7 @@ menu_draw = function(_menu)
 			define_align(fa_middle, fa_center);
 			_mouse_align = fa_center;
 	}
-	
-	
+		
 	for (var i = 0; i < _qtd; i++)
 	{
 		//Checar se eu preciso desenhar a opção
@@ -124,29 +126,54 @@ menu_draw = function(_menu)
 			
 				// Indice da alternativa
 				var _indice = _menu[i][3];
-				var _txt, _esq, _dir, _cor = c_white, _margem_x = string_width("O"), _alpha = 1;
+				var _txt, _esq, _dir, _margem_x = string_width("|"), _alpha = 1;
+				var _cor = c_white, _cor_d, _cor_e;
+				var _x_pos, _y_pos,_txt_pos, _esq_pos, _dir_pos, _sign_size, _size_tot;
 								
 				_txt	= _menu[i][4][_indice];
 				
 				// Desenhando informativos de limtie das alternativas
-				_esq	= _indice > 0 ? " << " : "";
-				_dir	= _indice < array_length((_menu[i][4])) - 1 ? " >> " : "";
+				_esq	= "<<"
+				_dir	= ">>"
+				
+				_cor_e	= _indice > 0 ? c_white : c_gray;
+				_cor_d	= _indice < array_length(_menu[i][4]) - 1 ? c_white : c_gray;
 				
 				// Calculando posição horizontal e vertical do menu na tela
-				var _x_pos = _larg_tela / 4 * 2 + _margem_x;
-				var _y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
+				_x_pos = _larg_tela / 4 * 2 + _margem_x;
+				_y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
+				
+				_esq_pos = _x_pos + _margem_x
+				_txt_pos = _x_pos + string_width(_esq) + _margem_x
+				_dir_pos = _x_pos + string_width(_txt)  + string_width(_esq) + _margem_x
+				
+				_size_tot = string_width(_esq + _txt + _dir);
+				_sign_size = string_width(_esq);
+				
+				_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _size_tot, _espaco_y, _mouse_align)		
+				// Se o mouse está em cima e não seja a mesma opção
+				if (_mouse_sel_flag && menus_sel[pag] != i) 
+				{
+					animar_flag = true;
+					menus_sel[pag] = i
+					if (animar_flag) anim_val = anim_val_total * valor_ac(ac_margem, true);
+				}
+			
+				mouse_control_alt(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _espaco_y)
 				
 				// Checando se a seleção esta no a opção atual
 				if (menus_sel[pag] == i) _cor = c_red;
 				
-				draw_text_color(_x_pos, _y_pos, _esq + _txt + _dir, _cor, _cor, _cor, _cor, _alpha);
+				draw_text_color(_esq_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, _alpha);
+				draw_text_color(_txt_pos, _y_pos, _txt, _cor, _cor, _cor, _cor, _alpha);
+				draw_text_color(_dir_pos, _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, _alpha);
 				break;
 				
 			case menu_acao.slider: 
 			
 				// Indice da alternativa
 				var _indice = _menu[i][3];
-				var _txt, _esq, _dir, _margem_x = string_width("O"), _alpha = 1;
+				var _txt, _esq, _dir, _margem_x = string_width("|"), _alpha = 1;
 				var _cor = c_white, _cor_d, _cor_e;
 								
 				_txt	= _menu[i][3];
@@ -159,15 +186,32 @@ menu_draw = function(_menu)
 				var _x_pos = _larg_tela / 4 * 2 + _margem_x;
 				var _y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
 				
+				_esq_pos = _x_pos + _margem_x
+				_txt_pos = _x_pos + string_width(_esq) + (_margem_x *2)
+				_dir_pos = _x_pos + string_width(_txt)  + string_width(_esq) + _margem_x * 3
+				
 				_cor_e	= _indice > _menu[i][4][0] ? c_white : c_gray;
 				_cor_d	= _indice < _menu[i][4][1] ? c_white : c_gray;
+				
+				_size_tot = string_width(_esq + string(_txt) + _dir);
+				_sign_size = string_width(_esq);
+				
+				_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _size_tot, _espaco_y, _mouse_align)		
+				// Se o mouse está em cima e não seja a mesma opção
+				if (_mouse_sel_flag && menus_sel[pag] != i) 
+				{
+					animar_flag = true;
+					menus_sel[pag] = i
+					if (animar_flag) anim_val = anim_val_total * valor_ac(ac_margem, true);
+				}
+				mouse_control_alt(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _espaco_y)
 				
 				// Checando se a seleção esta no a opção atual
 				if (menus_sel[pag] == i) _cor = c_red;
 				
-				draw_text_color(_x_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, _alpha);
-				draw_text_color(_x_pos + string_width(_esq) + _margem_x, _y_pos, _txt, _cor, _cor, _cor, _cor, _alpha);
-				draw_text_color(_x_pos + string_width(_txt) + _margem_x * 2 + string_width(_esq), _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, _alpha);
+				draw_text_color(_esq_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, _alpha);
+				draw_text_color(_txt_pos, _y_pos, _txt, _cor, _cor, _cor, _cor, _alpha);
+				draw_text_color(_dir_pos , _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, _alpha);
 				break;
 		}
 	}
@@ -216,49 +260,62 @@ input_control = function(_menu)
 	}
 
 	//Se eu apertar para a esquerda ou para a direita, eu mexo nas opções
-	if (_right || _left)
+	if ((_right || _left) || mouse_alt != 0)
 	{
-		var _indice, _limite, _arg, _arg2;
+		var _indice, _limite, _arg, _arg2, _aux;
 		
 		switch(_menu[_sel][1])
 		{
 			case menu_acao.alternar:
-						
+				
+				_aux = menus[pag][_sel][3];
 				// Definindo indice e limite
 				_indice = _menu[_sel][3];
 				_limite = array_length(_menu[_sel][4]) - 1;
 			
 				// Mudando o indíce de opção dentro do menu atual
-				menus[pag][_sel][3] += _right - _left;
+				menus[pag][_sel][3] += mouse_alt;
+				menus[pag][_sel][3] += (_right - _left)
+				
 				// Garantindo que não ultrapasse os limites
 				menus[pag][_sel][3] = clamp(menus[pag][_sel][3], 0, _limite);
+				
 				// Argumento que será passado para função
-				_arg = _menu[_sel][3];
-				_menu[_sel][2](_arg);
+				// Se tiver tido mudança 
+				if (menus[pag][_sel][3] != _aux)
+				{
+					_arg = _menu[_sel][3];
+					_menu[_sel][2](_arg);
+				}
 				
 				break;
 				
 			case menu_acao.slider:
-						
+				
+				_aux = menus[pag][_sel][3];
 				// Definindo indice e limite
 				_indice = _menu[_sel][3];
 				_limite = _menu[_sel][4][1];
 			
 				// Mudando o indíce de opção dentro do menu atual
-				menus[pag][_sel][3] += _right - _left;
+				menus[pag][_sel][3] += mouse_alt;
+				menus[pag][_sel][3] += (_right - _left);
 				
 				// Garantindo que não ultrapasse os limites
 				menus[pag][_sel][3] = clamp(menus[pag][_sel][3], 0, _limite);
 				
 				// Argumento que será passado para função
 				//_arg = audiogroup | _arg2 = volume
-				_arg = _menu[_sel][5];
-				_arg2 = _menu[_sel][3];
-			
-				_menu[_sel][2](_arg, _arg2 / 10);
+				if (menus[pag][_sel][3] != _aux)
+				{
+					_arg = _menu[_sel][5];
+					_arg2 = _menu[_sel][3];		
+					_menu[_sel][2](_arg, _arg2 / 10);
+				}
+				
 				break;			
 		}
-
+		mouse_alt =0 ;
 			
 	}
 
@@ -305,11 +362,25 @@ mouse_control_sel = function(_x_pos, _y_pos, _larg_txt, _altura_txt, _align)
 	else return false;
 }
 
+mouse_control_alt = function(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _altura, _ind)
+{
+	var _area_x_esq, _area_x_dir, _area_y, _margem = string_width("|");
+	_area_y		= mouse_y >= _y_pos - _altura / 2 && mouse_y <= _y_pos + _altura / 2;
+	_area_x_esq = mouse_x >= _esq_pos - _margem && mouse_x <= _esq_pos + _sign_size + _margem;
+	_area_x_dir = mouse_x >= _dir_pos - _margem && mouse_x <= _dir_pos + _sign_size + _margem;
 
+	
+	// Checando se o mouse esta sobre a area e clicou 
+	if (mouse_check_button_pressed(mb_left) && _area_y)
+	{
+		if ( _area_x_esq) mouse_alt = -1;
+		else if (_area_x_dir) mouse_alt = 1;
+	}
+	
+}
 
 
 #endregion
-
 
 
 
@@ -322,7 +393,7 @@ menu_principal =	[
 											
 											
 menu_opcoes =		[						
-						["VOLUME",				menu_acao.slider,			mudar_volume,		10, [0,10],	ag_bgm],
+						["VOLUME",				menu_acao.slider,			mudar_volume,		10, [0,15],	ag_bgm],
 						["MODO DA TELA",		menu_acao.alternar,			alternar_tela_cheia, 0, ["MODO JANELA", "TELA CHEIA"]],
 						["VOLTAR",				menu_acao.mudar_pagina,		pagina_menu.principal]
 					];

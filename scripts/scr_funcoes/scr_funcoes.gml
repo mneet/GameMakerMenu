@@ -48,7 +48,8 @@ function sair_jogo()
 
 function mudar_volume(_audiog ,_volume)
 {
-	audio_group_set_gain(_audiog, _volume, 0);	
+	audio_group_set_gain(_audiog, _volume , 0);	
+	show_debug_message("mudei volume");
 }
 
 function alternar_tela_cheia(_fullscreen)
@@ -67,7 +68,7 @@ function alternar_tela_cheia(_fullscreen)
 
 	view_wport = screenWidth;
 	view_hport = screenHeight;
-	show_debug_message(string(screenWidth));
+	show_debug_message("mudei screen");
 	
 	surface_resize(application_surface, screenWidth, screenHeight);	
 }
