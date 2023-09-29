@@ -15,6 +15,8 @@ enum menu_acao {
 	mensagem
 }
 
+if (!audio_group_is_loaded(ag_bgm)) audio_group_load(ag_bgm);
+
  
 //Seleção do menu
 
@@ -36,6 +38,7 @@ desenha_menu = function(_menu)
 	// Definindo alinhamento com base no menu atual
 	switch(pag)
 	{
+		case pagina_menu.sair:
 		case pagina_menu.principal:
 			define_align(fa_middle, fa_center);
 			break;
@@ -174,34 +177,71 @@ controla_menu = function(_menu)
 	
 	if (_up || _down)
 	{
-		menus_sel[pag] += _down - _up;	
+		// Armazenando seleção anterior
+		var _aux = _sel;
 		
-		//Limitando o sel dentro do vetor
+		menus_sel[pag] += _down - _up;			
+		// Limitando o sel dentro do vetor
 		var _tam = array_length(_menu) - 1;
 		menus_sel[pag] = clamp(menus_sel[pag], 0, _tam);
 		
-		//Flag animação
+		// Caso seleção seja do tipo mensagem, reverte mudança
+		if (_menu[menus_sel[pag]][1] == menu_acao.mensagem) menus_sel[pag] = _aux;
+		
+
+		
+		// Flag animação
 		_animar = true;
 		
 
 	}
 
-		//Se eu apertar para a esquerda ou para a direita, eu mexo nas opções
-		if (_right || _left)
+	//Se eu apertar para a esquerda ou para a direita, eu mexo nas opções
+	if (_right || _left)
+	{
+		var _indice, _limite, _arg, _arg2;
+		
+		switch(_menu[_sel][1])
 		{
-			//Limite
-			var _indice = _menu[_sel][3] != -1 ? 3 : 4;
-			var _limite = _indice == 3 ? array_length(_menu[_sel][4]) - 1 : 10;
+			case menu_acao.alternar:
+						
+				// Definindo indice e limite
+				_indice = _menu[_sel][3];
+				_limite = array_length(_menu[_sel][4]) - 1;
 			
-			//Mudando o indíce de opção dentro do menu atual
-			menus[pag][_sel][_indice] += _right - _left;
-			//garantindo que não ultrapasse os limites
-			menus[pag][_sel][_indice] = clamp(menus[pag][_sel][_indice], 0, _limite);
+				// Mudando o indíce de opção dentro do menu atual
+				menus[pag][_sel][3] += _right - _left;
+				// Garantindo que não ultrapasse os limites
+				menus[pag][_sel][3] = clamp(menus[pag][_sel][3], 0, _limite);
+				// Argumento que será passado para função
+				_arg = _menu[_sel][3];
+				_menu[_sel][2](_arg);
+				
+				break;
+				
+			case menu_acao.slider:
+						
+				// Definindo indice e limite
+				_indice = _menu[_sel][3];
+				_limite = _menu[_sel][4][1];
 			
-			var _arg = _menu[_sel][_indice];
-			_menu[_sel][2](_arg);
+				// Mudando o indíce de opção dentro do menu atual
+				menus[pag][_sel][3] += _right - _left;
+				
+				// Garantindo que não ultrapasse os limites
+				menus[pag][_sel][3] = clamp(menus[pag][_sel][3], 0, _limite);
+				
+				// Argumento que será passado para função
+				//_arg = audiogroup | _arg2 = volume
+				_arg = _menu[_sel][5];
+				_arg2 = _menu[_sel][3];
 			
+				_menu[_sel][2](_arg, _arg2 / 10);
+				break;			
 		}
+
+			
+	}
 
 	//O que fazer quando apertar o enter em uma opção
 	if (_confirm)
@@ -230,23 +270,28 @@ controla_menu = function(_menu)
 
 //Criando meu menu
 menu_principal =	[
-						["JOGAR",			menu_acao.rodar_metodo,		iniciar_jogo],
-						["OPÇÕES",			menu_acao.mudar_pagina,		pagina_menu.configuracoes],
-						["SAIR",			menu_acao.rodar_metodo,		sair_jogo]
+						["JOGAR",				menu_acao.rodar_metodo,		iniciar_jogo],
+						["OPÇÕES",				menu_acao.mudar_pagina,		pagina_menu.configuracoes],
+						["SAIR",				menu_acao.mudar_pagina,		pagina_menu.sair]
 					];						
 											
 											
 menu_opcoes =		[						
-						["VOLUME",			menu_acao.slider,			mudar_volume, 10, [0,10]],
-						["MODO DA TELA",	menu_acao.alternar,			alternar_tela_cheia, 0, ["MODO JANELA", "TELA CHEIA"]],
-						["VOLTAR",			menu_acao.mudar_pagina,		pagina_menu.principal]
+						["VOLUME",				menu_acao.slider,			mudar_volume,		10, [0,10],	ag_bgm],
+						["MODO DA TELA",		menu_acao.alternar,			alternar_tela_cheia, 0, ["MODO JANELA", "TELA CHEIA"]],
+						["VOLTAR",				menu_acao.mudar_pagina,		pagina_menu.principal]
+					];
+
+menu_sair =			[
+						["VOCÊ DESEJA SAIR?",	menu_acao.mensagem],
+						["SIM",					menu_acao.rodar_metodo,		sair_jogo],
+						["NÃO",					menu_acao.mudar_pagina,		pagina_menu.principal]
 					];
 
 
 
 //Salvando todos os menus
-
-menus = [menu_principal, menu_opcoes]
+menus = [menu_principal, menu_opcoes, menu_sair]
 
 //Salvando a seleção de cada menu
 menus_sel = array_create(array_length(menus), 0);

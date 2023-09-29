@@ -48,7 +48,7 @@ function sair_jogo()
 
 function mudar_volume(_audiog ,_volume)
 {
-	audio_group_set_gain(_audiog, _volume / 10, 0);	
+	audio_group_set_gain(_audiog, _volume, 0);	
 }
 
 function alternar_tela_cheia(_fullscreen)
