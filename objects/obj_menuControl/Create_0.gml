@@ -22,6 +22,9 @@ if (!audio_group_is_loaded(ag_bgm)) audio_group_load(ag_bgm);
 
 anim_val_total = 1;
 anim_val = 0;
+mouse_flag = false;
+animar_flag = false;
+mouse_click = false;
 
 //Controlando a página do menu
 pag = 0;
@@ -30,20 +33,23 @@ pag = 0;
 #region METODOS
 
 //Desenha menu
-desenha_menu = function(_menu)
+menu_draw = function(_menu)
 {
 	// Definindo a fonte
 	draw_set_font(fnt_menu);
-
+	static _animar = false;
+	var _mouse_align, _mouse_sel_flag;
 	// Definindo alinhamento com base no menu atual
 	switch(pag)
 	{
 		case pagina_menu.sair:
 		case pagina_menu.principal:
 			define_align(fa_middle, fa_center);
+			_mouse_align = fa_center;
 			break;
 		case pagina_menu.configuracoes:
 			define_align(fa_middle, fa_right);
+			_mouse_align = fa_right;
 			break;
 	}
 
@@ -65,21 +71,33 @@ desenha_menu = function(_menu)
 	{
 
 		var _cor = c_white, _anim = 0, _alpha = 1;
-
 		
 		// Texto da opção atual
 		var _texto = _menu[i][0];
+		
+		// Calculando posição horizontal e vertical do menu na tela
+		var _x_pos = _larg_tela / 2;
+		var _y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
+		
+		//Mouse control
+		var _larg_txt = string_width(_texto);
+		_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _larg_txt, _espaco_y, _mouse_align)
+		
+		if (_mouse_sel_flag && menus_sel[pag] != i) 
+		{
+			animar_flag = true;
+			menus_sel[pag] = i
+			if (animar_flag) anim_val = anim_val_total * valor_ac(ac_margem, true);
+		}
+		
 		// Checando se a seleção esta no a opção atual
 		if (menus_sel[pag] == i && _menu[i][1] != menu_acao.mensagem)
 		{
 			_cor = c_red;
 			_anim = anim_val;
 		}
+				
 		
-		// Calculando posição horizontal e vertical do menu na tela
-		var _x_pos = _larg_tela / 2;
-		var _y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
-	
 		draw_text_transformed_color(_x_pos, _y_pos, _texto, 1 + _anim, 1 + _anim, image_angle,_cor, _cor,_cor, _cor, _alpha);
 	}
 	
@@ -89,9 +107,11 @@ desenha_menu = function(_menu)
 	{
 		case pagina_menu.configuracoes:
 			define_align(fa_middle, fa_left);
+			_mouse_align = fa_left;
 			break;
 		default:
 			define_align(fa_middle, fa_center);
+			_mouse_align = fa_center;
 	}
 	
 	
@@ -158,14 +178,13 @@ desenha_menu = function(_menu)
 }
 
 //Controlando o menu
-controla_menu = function(_menu)
+input_control = function(_menu)
 {
 	//Input
 	var _up, _down, _confirm, _back, _left, _right;
 	
 	var _sel = menus_sel[pag];
 	
-	static _animar = false;
 
 	_up			= keyboard_check_pressed(vk_up)		|| keyboard_check_pressed(ord("W"));
 	_down		= keyboard_check_pressed(vk_down)	|| keyboard_check_pressed(ord("S"));
@@ -191,7 +210,7 @@ controla_menu = function(_menu)
 
 		
 		// Flag animação
-		_animar = true;
+		animar_flag = true;
 		
 
 	}
@@ -244,21 +263,47 @@ controla_menu = function(_menu)
 	}
 
 	//O que fazer quando apertar o enter em uma opção
-	if (_confirm)
+	if (_confirm || mouse_click)
 	{
 		switch(_menu[_sel][1])
 		{
 			//Caso seja 0, ele roda um método
 			case menu_acao.rodar_metodo: _menu[_sel][2](); break;
 			case menu_acao.mudar_pagina: pag = _menu[_sel][2]; break;
-
 		}
+		mouse_click = false;
 	}
 	
 	//Animando a margem
-	if (_animar) anim_val = anim_val_total * valor_ac(ac_margem, _up ^^ _down);
+	if (animar_flag) anim_val = anim_val_total * valor_ac(ac_margem, _up ^^ _down);
 }
 
+mouse_control_sel = function(_x_pos, _y_pos, _larg_txt, _altura_txt, _align)
+{
+	var _area_x, _area_y;
+	_area_y = mouse_y >= _y_pos - _altura_txt / 2 && mouse_y <= _y_pos + _altura_txt / 2;
+	
+	// Definindo area horizontal do texto com base no alinhamento recebido
+	switch(_align)
+	{
+		case fa_center:
+			_area_x = mouse_x >= _x_pos - _larg_txt / 2 && mouse_x <= _x_pos + _larg_txt / 2;
+			break;
+		case fa_left:
+			_area_x = mouse_x >= _x_pos  && mouse_x <= _x_pos + _larg_txt;
+			break;
+		case fa_right:
+			_area_x = mouse_x >= _x_pos - _larg_txt && mouse_x <= _x_pos;
+			break;
+	}
+	
+	// Checando se o mouse esta sobre a area e clicou 
+	if (mouse_check_button_pressed(mb_left) && _area_x && _area_y) mouse_click = true;
+	
+	// Retorno se o mouse esta ou não sobre a area
+	if (_area_x && _area_y)	return true;
+	else return false;
+}
 
 
 

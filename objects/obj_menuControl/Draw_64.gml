@@ -2,4 +2,4 @@
 // Você pode escrever seu código neste editor
 
 
-desenha_menu(menus[pag]);
+menu_draw(menus[pag]);
