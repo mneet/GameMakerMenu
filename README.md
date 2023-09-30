@@ -1,57 +1,39 @@
-<!DOCTYPE html>
-<html>
+# GameMakerMenu
 
-<head>
-    <title>GameMakerMenu</title>
-</head>
+![Exemplo de Funcionamento](https://github.com/mneet/GameMakerMenu/blob/main/imagens/vetor_menus.png?raw=true)
 
-<body>
-    <h1>GameMakerMenu</h1>
+O **GameMakerMenu** é uma biblioteca que simplifica a criação de menus interativos em jogos desenvolvidos no GameMaker Studio. Ele permite criar menus dinâmicos com várias opções e ações associadas a cada uma delas.
 
-    <img src="https://github.com/mneet/GameMakerMenu/blob/main/imagens/vetor_menus.png?raw=true" alt="Exemplo de Funcionamento">
+## Funcionamento Básico
 
-    <p>O <strong>GameMakerMenu</strong> é uma biblioteca que simplifica a criação de menus interativos em jogos desenvolvidos no GameMaker Studio. Ele permite criar menus dinâmicos com várias opções e ações associadas a cada uma delas.</p>
+As páginas dos menus são declaradas em arrays bidimensionais, que armazenam as opções presentes em cada menu e a função associada a cada uma delas.
 
-    <h2>Funcionamento Básico</h2>
+**Exemplo:**
 
-    <p>As páginas dos menus são declaradas em arrays bidimensionais, que armazenam as opções presentes em cada menu e a função associada a cada uma delas.</p>
+![Exemplo de Menu](https://github.com/mneet/GameMakerMenu/blob/main/imagens/exemplo_menu.png?raw=true)
 
-    <h3>Exemplo:</h3>
+Neste exemplo, observe:
 
-    <img src="https://github.com/mneet/GameMakerMenu/blob/main/imagens/exemplo_menu.png?raw=true" alt="Exemplo de Menu">
+- No índice 0, temos o texto que será exibido na tela.
+- No índice 1, especificamos a função dessa opção, como a execução de um script ou a mudança para outra página do menu.
+- No índice 2, indicamos o script ou página de destino associada a essa opção.
 
-    <p>Neste exemplo, observe:</p>
+### Diferenças Dependendo da Função da Opção
 
-    <ul>
-        <li>No índice 0, temos o texto que será exibido na tela.</li>
-        <li>No índice 1, especificamos a função dessa opção, como a execução de um script ou a mudança para outra página do menu.</li>
-        <li>No índice 2, indicamos o script ou página de destino associada a essa opção.</li>
-    </ul>
+Além disso, podem haver diferenças no conteúdo a partir do índice 3, dependendo do tipo de ação associada à opção.
 
-    <h4>Diferenças Dependendo da Função da Opção</h4>
+![Diferentes Tipos de Ação](https://github.com/mneet/GameMakerMenu/assets/100791626/1c0d5069-81c5-45ff-a121-fcb3198f0fd1)
 
-    <p>Além disso, podem haver diferenças no conteúdo a partir do índice 3, dependendo do tipo de ação associada à opção.</p>
+Ambas as opções estão presentes na mesma página do menu, mas seus conteúdos a partir do índice 3 são diferentes com base na ação associada.
 
-    <img src="https://github.com/mneet/GameMakerMenu/assets/100791626/1c0d5069-81c5-45ff-a121-fcb3198f0fd1"
-        alt="Diferentes Tipos de Ação">
+### Adicionando Novas Páginas de Menu
 
-    <p>Ambas as opções estão presentes na mesma página do menu, mas seus conteúdos a partir do índice 3 são diferentes com base na ação associada.</p>
+Para criar uma nova página de menu, siga estas etapas:
 
-    <h3>Adicionando Novas Páginas de Menu</h3>
+1. Crie um novo vetor seguindo o mesmo layout apresentado.
+2. Adicione a variável contendo esse vetor dentro da variável `menus[...]`.
+3. Certifique-se de adicionar o nome dessa página ao enumerador presente no evento `create` do `obj_menuControl`. A ordem do enumerador deve corresponder à ordem das variáveis em `menus`.
 
-    <p>Para criar uma nova página de menu, siga estas etapas:</p>
+## Créditos
 
-    <ol>
-        <li>Crie um novo vetor seguindo o mesmo layout apresentado.</li>
-        <li>Adicione a variável contendo esse vetor dentro da variável <code>menus[...]</code>.</li>
-        <li>Certifique-se de adicionar o nome dessa página ao enumerador presente no evento <code>create</code> do <code>obj_menuControl</code>. A ordem do enumerador deve corresponder à ordem das variáveis em <code>menus</code>.</li>
-    </ol>
-
-    <h2>Créditos</h2>
-
-    <p>Este sistema é baseado no tutorial do canal FriendlyCosmonaut.</a>.</p>
-
-</body>
-
-</html>
-
+Este sistema é baseado no tutorial do canal FriendlyCosmonaut. Você pode assistir ao tutorial original [aqui](URL_DO_TUTORIAL).
