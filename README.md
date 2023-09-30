@@ -2,8 +2,6 @@
 
 ![Exemplo de Funcionamento](https://github.com/mneet/GameMakerMenu/blob/main/imagens/vetor_menus.png?raw=true)
 
-O **GameMakerMenu** é uma biblioteca que simplifica a criação de menus interativos em jogos desenvolvidos no GameMaker Studio. Ele permite criar menus dinâmicos com várias opções e ações associadas a cada uma delas.
-
 ## Funcionamento Básico
 
 As páginas dos menus são declaradas em arrays bidimensionais, que armazenam as opções presentes em cada menu e a função associada a cada uma delas.
