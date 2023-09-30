@@ -1,5 +1,5 @@
 # GameMakerMenu
-
+![Exemplo](https://github.com/mneet/GameMakerMenu/blob/main/imagens/Menu.gif?raw=true)
 ## Funcionamento Básico
 
 ![Exemplo de Funcionamento](https://github.com/mneet/GameMakerMenu/blob/main/imagens/vetor_menus.png?raw=true)
