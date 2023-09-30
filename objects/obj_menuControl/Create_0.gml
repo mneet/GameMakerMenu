@@ -8,7 +8,7 @@ enum pagina_menu {
 }
 
 enum menu_acao {
-	rodar_metodo,
+	rodar_script,
 	mudar_pagina,
 	slider,
 	alternar,
@@ -143,13 +143,16 @@ menu_draw = function(_menu)
 				_x_pos = _larg_tela / 4 * 2 + _margem_x;
 				_y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
 				
+				// Calculando posições dos elementos
 				_esq_pos = _x_pos + _margem_x
 				_txt_pos = _x_pos + string_width(_esq) + _margem_x
 				_dir_pos = _x_pos + string_width(_txt)  + string_width(_esq) + _margem_x
 				
+				// Tamanho total e tamanho dos sinais
 				_size_tot = string_width(_esq + _txt + _dir);
 				_sign_size = string_width(_esq);
 				
+				//Controle de seleção por mouse
 				_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _size_tot, _espaco_y, _mouse_align)		
 				// Se o mouse está em cima e não seja a mesma opção
 				if (_mouse_sel_flag && menus_sel[pag] != i) 
@@ -186,17 +189,22 @@ menu_draw = function(_menu)
 				var _x_pos = _larg_tela / 4 * 2 + _margem_x;
 				var _y_pos =  (_alt_tela / 3) * 2 - _alt_menu / 2 + (i * _espaco_y);
 				
+				// Calculando posições dos simbolos e do texto
 				_esq_pos = _x_pos + _margem_x
 				_txt_pos = _x_pos + string_width(_esq) + (_margem_x *2)
 				_dir_pos = _x_pos + string_width(_txt)  + string_width(_esq) + _margem_x * 3
 				
+				// Definindo cor dos simbolos com base nos limites presentes no layout
 				_cor_e	= _indice > _menu[i][4][0] ? c_white : c_gray;
 				_cor_d	= _indice < _menu[i][4][1] ? c_white : c_gray;
 				
+				// Tamanho total e tamanho dos sinais
 				_size_tot = string_width(_esq + string(_txt) + _dir);
 				_sign_size = string_width(_esq);
 				
-				_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _size_tot, _espaco_y, _mouse_align)		
+				//Controle de seleção por mouse
+				_mouse_sel_flag = mouse_control_sel(_x_pos, _y_pos, _size_tot, _espaco_y, _mouse_align)	
+				
 				// Se o mouse está em cima e não seja a mesma opção
 				if (_mouse_sel_flag && menus_sel[pag] != i) 
 				{
@@ -204,6 +212,8 @@ menu_draw = function(_menu)
 					menus_sel[pag] = i
 					if (animar_flag) anim_val = anim_val_total * valor_ac(ac_margem, true);
 				}
+				
+				// Controle de alterações no menu secundário
 				mouse_control_alt(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _espaco_y)
 				
 				// Checando se a seleção esta no a opção atual
@@ -325,7 +335,7 @@ input_control = function(_menu)
 		switch(_menu[_sel][1])
 		{
 			//Caso seja 0, ele roda um método
-			case menu_acao.rodar_metodo: _menu[_sel][2](); break;
+			case menu_acao.rodar_script: _menu[_sel][2](); break;
 			case menu_acao.mudar_pagina: pag = _menu[_sel][2]; break;
 		}
 		mouse_click = false;
@@ -337,44 +347,77 @@ input_control = function(_menu)
 
 mouse_control_sel = function(_x_pos, _y_pos, _larg_txt, _altura_txt, _align)
 {
-	var _area_x, _area_y;
-	_area_y = mouse_y >= _y_pos - _altura_txt / 2 && mouse_y <= _y_pos + _altura_txt / 2;
+	var _area_x, _area_y, _m_x, _m_y, _box, _x1, _x2, _y1, _y2;
 	
-	// Definindo area horizontal do texto com base no alinhamento recebido
+	// Pegando posição do mouse relativa a GUI
+	_m_x = device_mouse_x_to_gui(0);
+	_m_y = device_mouse_y_to_gui(0);
+	
+	// Calculando a altura do retangulo para colisão
+	_y1 = _y_pos - _altura_txt / 2; 
+	_y2 = _y_pos + _altura_txt / 2;
+	
+	// Calculando a largura do retangulo para colisão de acordo com alinhamento recebido
 	switch(_align)
 	{
 		case fa_center:
-			_area_x = mouse_x >= _x_pos - _larg_txt / 2 && mouse_x <= _x_pos + _larg_txt / 2;
+			_x1 = _x_pos - _larg_txt / 2; 
+			_x2 = _x_pos + _larg_txt / 2;
 			break;
 		case fa_left:
-			_area_x = mouse_x >= _x_pos  && mouse_x <= _x_pos + _larg_txt;
+			_x1 = _x_pos; 
+			_x2 = _x_pos + _larg_txt;
 			break;
 		case fa_right:
-			_area_x = mouse_x >= _x_pos - _larg_txt && mouse_x <= _x_pos;
+			_x1 = _x_pos - _larg_txt;
+			_x2 = _x_pos;
 			break;
 	}
 	
+	// Definindo a area de colisão com base nas posições calculadas
+	_box = point_in_rectangle(_m_x, _m_y, _x1, _y1, _x2, _y2);
+	
 	// Checando se o mouse esta sobre a area e clicou 
-	if (mouse_check_button_pressed(mb_left) && _area_x && _area_y) mouse_click = true;
+	if (mouse_check_button_pressed(mb_left) && _box) mouse_click = true;
 	
 	// Retorno se o mouse esta ou não sobre a area
-	if (_area_x && _area_y)	return true;
+	if (_box)	return true;
 	else return false;
 }
 
 mouse_control_alt = function(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _altura, _ind)
 {
 	var _area_x_esq, _area_x_dir, _area_y, _margem = string_width("|");
-	_area_y		= mouse_y >= _y_pos - _altura / 2 && mouse_y <= _y_pos + _altura / 2;
-	_area_x_esq = mouse_x >= _esq_pos - _margem && mouse_x <= _esq_pos + _sign_size + _margem;
-	_area_x_dir = mouse_x >= _dir_pos - _margem && mouse_x <= _dir_pos + _sign_size + _margem;
+	
+	var _m_x, _m_y, _box_esq, _box_dir, _x1_esq, _x2_esq, _x1_dir, _x2_dir, _y1, _y2;
+	
+	// Pegando posição do mouse relativa a GUI
+	_m_x = device_mouse_x_to_gui(0);
+	_m_y = device_mouse_y_to_gui(0);
+	
+	// Calculando a altura do retangulo para colisão
+	_y1 = _y_pos - _altura / 2; 
+	_y2 = _y_pos + _altura / 2;
+	
+	// Calculando area de colisão esquerda
+	_x1_esq = _esq_pos - _margem;
+	_x2_esq = _esq_pos + _sign_size + _margem;
+	
+	// Calculando area de colisão direita
+	_x1_dir = _dir_pos - _margem
+	_x2_dir = _dir_pos + _sign_size + _margem
+	
+	// Definindo caixas de colisão 
+	_box_dir = point_in_rectangle(_m_x, _m_y, _x1_dir, _y1, _x2_dir, _y2);
+	_box_esq = point_in_rectangle(_m_x, _m_y, _x1_esq, _y1, _x2_esq, _y2);
 
 	
 	// Checando se o mouse esta sobre a area e clicou 
-	if (mouse_check_button_pressed(mb_left) && _area_y)
+	if (mouse_check_button_pressed(mb_left))
 	{
-		if ( _area_x_esq) mouse_alt = -1;
-		else if (_area_x_dir) mouse_alt = 1;
+		// Se clicou na esquerad diminui, direita aumenta
+		if (_box_esq) mouse_alt = -1;
+		else if (_box_dir) mouse_alt = 1;
 	}
 	
 }
@@ -386,21 +429,21 @@ mouse_control_alt = function(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _
 
 //Criando meu menu
 menu_principal =	[
-						["JOGAR",				menu_acao.rodar_metodo,		iniciar_jogo],
+						["JOGAR",				menu_acao.rodar_script,		iniciar_jogo],
 						["OPÇÕES",				menu_acao.mudar_pagina,		pagina_menu.configuracoes],
 						["SAIR",				menu_acao.mudar_pagina,		pagina_menu.sair]
 					];						
 											
 											
 menu_opcoes =		[						
-						["VOLUME",				menu_acao.slider,			mudar_volume,		10, [0,15],	ag_bgm],
+						["VOLUME",				menu_acao.slider,			mudar_volume,		10, [0,10],	ag_bgm],
 						["MODO DA TELA",		menu_acao.alternar,			alternar_tela_cheia, 0, ["MODO JANELA", "TELA CHEIA"]],
 						["VOLTAR",				menu_acao.mudar_pagina,		pagina_menu.principal]
 					];
 
 menu_sair =			[
 						["VOCÊ DESEJA SAIR?",	menu_acao.mensagem],
-						["SIM",					menu_acao.rodar_metodo,		sair_jogo],
+						["SIM",					menu_acao.rodar_script,		sair_jogo],
 						["NÃO",					menu_acao.mudar_pagina,		pagina_menu.principal]
 					];
 

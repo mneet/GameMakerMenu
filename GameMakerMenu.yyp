@@ -39,7 +39,7 @@
     {"id":{"name":"rm_gameplay","path":"rooms/rm_gameplay/rm_gameplay.yy",},},
     {"id":{"name":"fnt_menu","path":"fonts/fnt_menu/fnt_menu.yy",},},
     {"id":{"name":"snd_music","path":"sounds/snd_music/snd_music.yy",},},
-    {"id":{"name":"spr","path":"sprites/spr/spr.yy",},},
+    {"id":{"name":"spr_bg","path":"sprites/spr_bg/spr_bg.yy",},},
     {"id":{"name":"scr_funcoes","path":"scripts/scr_funcoes/scr_funcoes.yy",},},
     {"id":{"name":"obj_menuControl","path":"objects/obj_menuControl/obj_menuControl.yy",},},
     {"id":{"name":"rm_menu_inicial","path":"rooms/rm_menu_inicial/rm_menu_inicial.yy",},},
