@@ -20,7 +20,7 @@ Neste exemplo, observe:
 
 Além disso, podem haver diferenças no conteúdo a partir do índice 3, dependendo do tipo de ação associada à opção.
 
-![Diferentes Tipos de Ação](https://github.com/mneet/GameMakerMenu/assets/100791626/1c0d5069-81c5-45ff-a121-fcb3198f0fd1)
+![Diferentes Tipos de Ação](https://github.com/mneet/GameMakerMenu/blob/main/imagens/exemplo_vetor.png?raw=true)
 
 Ambas as opções estão presentes na mesma página do menu, mas seus conteúdos a partir do índice 3 são diferentes com base na ação associada.
 
