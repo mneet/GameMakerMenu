@@ -1,27 +1,57 @@
-# GameMakerMenu
+<!DOCTYPE html>
+<html>
 
-Como funciona:
-![](https://github.com/mneet/GameMakerMenu/blob/main/imagens/vetor_menus.png?raw=true)
+<head>
+    <title>GameMakerMenu</title>
+</head>
 
-As paginas dos menus são declaradas em arrays bidimensionais que armazenaram as opções presentes em cada menu e a função de cada uma>
+<body>
+    <h1>GameMakerMenu</h1>
 
-Exemplo:
-![](https://github.com/mneet/GameMakerMenu/blob/main/imagens/exemplo_menu.png?raw=true)
+    <img src="https://github.com/mneet/GameMakerMenu/blob/main/imagens/vetor_menus.png?raw=true" alt="Exemplo de Funcionamento">
 
-Nesse exemplo podemos perceber que:
-  No indice 0 temos o texto, o conteúdo que sera exibido na tela.
-  No indice 1 temos qual é a função dessa opção, se rodara um script, se mudara a página do menu, etc
-  No indice 2 temos o scrip ou pagina destino que essa opção levará.
+    <p>O <strong>GameMakerMenu</strong> é uma biblioteca que simplifica a criação de menus interativos em jogos desenvolvidos no GameMaker Studio. Ele permite criar menus dinâmicos com várias opções e ações associadas a cada uma delas.</p>
 
-Podemos ter também algumas diferenças dependendo do tipo de função da opção:
+    <h2>Funcionamento Básico</h2>
 
-![image](https://github.com/mneet/GameMakerMenu/assets/100791626/1c0d5069-81c5-45ff-a121-fcb3198f0fd1)
+    <p>As páginas dos menus são declaradas em arrays bidimensionais, que armazenam as opções presentes em cada menu e a função associada a cada uma delas.</p>
 
-Ambas opções estão presentes no mesma pagina de menu, mas possuem diferentes conteúdos a partir do índice 3 dependendo do tipo de ação.
+    <h3>Exemplo:</h3>
 
-Para criar uma nova pagina do menu, basta criar um novo vetor seguindo o layout apresentado, adicionar a variavel contendo esse vetor dentro da váriavel menus[...].
-Também é necessário adicionar o nome dessa página no enumerador presente no evento create do obj_menuControl, atenção que a ordem do enumerador deve ser a mesma da váriavel 'menus'.
+    <img src="https://github.com/mneet/GameMakerMenu/blob/main/imagens/exemplo_menu.png?raw=true" alt="Exemplo de Menu">
 
+    <p>Neste exemplo, observe:</p>
 
+    <ul>
+        <li>No índice 0, temos o texto que será exibido na tela.</li>
+        <li>No índice 1, especificamos a função dessa opção, como a execução de um script ou a mudança para outra página do menu.</li>
+        <li>No índice 2, indicamos o script ou página de destino associada a essa opção.</li>
+    </ul>
 
-Esse sistema é baseado no tutorial do canal FriendlyCosmonaut.
+    <h4>Diferenças Dependendo da Função da Opção</h4>
+
+    <p>Além disso, podem haver diferenças no conteúdo a partir do índice 3, dependendo do tipo de ação associada à opção.</p>
+
+    <img src="https://github.com/mneet/GameMakerMenu/assets/100791626/1c0d5069-81c5-45ff-a121-fcb3198f0fd1"
+        alt="Diferentes Tipos de Ação">
+
+    <p>Ambas as opções estão presentes na mesma página do menu, mas seus conteúdos a partir do índice 3 são diferentes com base na ação associada.</p>
+
+    <h3>Adicionando Novas Páginas de Menu</h3>
+
+    <p>Para criar uma nova página de menu, siga estas etapas:</p>
+
+    <ol>
+        <li>Crie um novo vetor seguindo o mesmo layout apresentado.</li>
+        <li>Adicione a variável contendo esse vetor dentro da variável <code>menus[...]</code>.</li>
+        <li>Certifique-se de adicionar o nome dessa página ao enumerador presente no evento <code>create</code> do <code>obj_menuControl</code>. A ordem do enumerador deve corresponder à ordem das variáveis em <code>menus</code>.</li>
+    </ol>
+
+    <h2>Créditos</h2>
+
+    <p>Este sistema é baseado no tutorial do canal FriendlyCosmonaut.</a>.</p>
+
+</body>
+
+</html>
+
