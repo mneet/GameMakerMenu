@@ -1,31 +1,20 @@
 /// @description Inserir descrição aqui
 // Você pode escrever seu código neste editor
 
-enum pagina_menu {
-	principal,
-	configuracoes,
-	sair
-}
-
-enum menu_acao {
-	rodar_script,
-	mudar_pagina,
-	slider,
-	alternar,
-	mensagem
-}
-
 if (!audio_group_is_loaded(ag_bgm)) audio_group_load(ag_bgm);
 
- 
-//Seleção do menu
-
+// Valores da animação
 anim_val_total = 1;
 anim_val = 0;
-mouse_flag = false;
 animar_flag = false;
+
+// Controle do mouse
+mouse_flag = false;
 mouse_click = false;
 mouse_alt = 0;
+
+// Alpha menu
+alpha = 1;
 
 //Controlando a página do menu
 pag = 0;
@@ -53,6 +42,10 @@ menu_draw = function(_menu)
 			define_align(fa_middle, fa_right);
 			_mouse_align = fa_right;
 			break;
+		default: 
+			define_align(fa_middle, fa_center);
+			_mouse_align = fa_center;
+			break;
 	}
 
 	// Quantidade de opções no menu atual
@@ -72,7 +65,7 @@ menu_draw = function(_menu)
 	for (var i = 0; i < _qtd; i++)
 	{
 
-		var _cor = c_white, _anim = 0, _alpha = 1;
+		var _cor = c_white, _anim = 0;
 		
 		// Texto da opção atual
 		var _texto = _menu[i][0];
@@ -101,7 +94,7 @@ menu_draw = function(_menu)
 		}
 				
 		
-		draw_text_transformed_color(_x_pos, _y_pos, _texto, 1 + _anim, 1 + _anim, image_angle,_cor, _cor,_cor, _cor, _alpha);
+		draw_text_transformed_color(_x_pos, _y_pos, _texto, 1 + _anim, 1 + _anim, image_angle,_cor, _cor,_cor, _cor, alpha);
 	}
 	
 	// Desenhar o menu secundário quando necessário
@@ -126,7 +119,7 @@ menu_draw = function(_menu)
 			
 				// Indice da alternativa
 				var _indice = _menu[i][3];
-				var _txt, _esq, _dir, _margem_x = string_width("|"), _alpha = 1;
+				var _txt, _esq, _dir, _margem_x = string_width("|");
 				var _cor = c_white, _cor_d, _cor_e;
 				var _x_pos, _y_pos,_txt_pos, _esq_pos, _dir_pos, _sign_size, _size_tot;
 								
@@ -167,16 +160,16 @@ menu_draw = function(_menu)
 				// Checando se a seleção esta no a opção atual
 				if (menus_sel[pag] == i) _cor = c_red;
 				
-				draw_text_color(_esq_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, _alpha);
-				draw_text_color(_txt_pos, _y_pos, _txt, _cor, _cor, _cor, _cor, _alpha);
-				draw_text_color(_dir_pos, _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, _alpha);
+				draw_text_color(_esq_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, alpha);
+				draw_text_color(_txt_pos, _y_pos, _txt, _cor, _cor, _cor, _cor, alpha);
+				draw_text_color(_dir_pos, _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, alpha);
 				break;
 				
 			case menu_acao.slider: 
 			
 				// Indice da alternativa
 				var _indice = _menu[i][3];
-				var _txt, _esq, _dir, _margem_x = string_width("|"), _alpha = 1;
+				var _txt, _esq, _dir, _margem_x = string_width("|");
 				var _cor = c_white, _cor_d, _cor_e;
 								
 				_txt	= _menu[i][3];
@@ -219,9 +212,9 @@ menu_draw = function(_menu)
 				// Checando se a seleção esta no a opção atual
 				if (menus_sel[pag] == i) _cor = c_red;
 				
-				draw_text_color(_esq_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, _alpha);
-				draw_text_color(_txt_pos, _y_pos, _txt, _cor, _cor, _cor, _cor, _alpha);
-				draw_text_color(_dir_pos , _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, _alpha);
+				draw_text_color(_esq_pos, _y_pos, _esq, _cor_e, _cor_e, _cor_e, _cor_e, alpha);
+				draw_text_color(_txt_pos, _y_pos, _txt, _cor, _cor, _cor, _cor, alpha);
+				draw_text_color(_dir_pos , _y_pos, _dir, _cor_d, _cor_d, _cor_d, _cor_d, alpha);
 				break;
 		}
 	}
@@ -337,6 +330,10 @@ input_control = function(_menu)
 			//Caso seja 0, ele roda um método
 			case menu_acao.rodar_script: _menu[_sel][2](); break;
 			case menu_acao.mudar_pagina: pag = _menu[_sel][2]; break;
+			case menu_acao.mudar_room: 
+				_menu[_sel][2](_menu[_sel][3]);
+				alpha = 0;
+				break;
 		}
 		mouse_click = false;
 	}
@@ -346,6 +343,7 @@ input_control = function(_menu)
 }
 
 mouse_control_sel = function(_x_pos, _y_pos, _larg_txt, _altura_txt, _align)
+
 {
 	var _area_x, _area_y, _m_x, _m_y, _box, _x1, _x2, _y1, _y2;
 	
@@ -429,28 +427,33 @@ mouse_control_alt = function(_y_pos, _esq_pos, _dir_pos, _txt_pos, _sign_size, _
 
 //Criando meu menu
 menu_principal =	[
-						["JOGAR",				menu_acao.rodar_script,		iniciar_jogo],
-						["OPÇÕES",				menu_acao.mudar_pagina,		pagina_menu.configuracoes],
-						["SAIR",				menu_acao.mudar_pagina,		pagina_menu.sair]
-					];						
-											
-											
-menu_opcoes =		[						
-						["VOLUME",				menu_acao.slider,			mudar_volume,		10, [0,10],	ag_bgm],
-						["MODO DA TELA",		menu_acao.alternar,			alternar_tela_cheia, 0, ["MODO JANELA", "TELA CHEIA"]],
-						["VOLTAR",				menu_acao.mudar_pagina,		pagina_menu.principal]
+						["JOGAR",						menu_acao.mudar_room,		trans_room,		rm_gameplay],
+						["OPÇÕES",						menu_acao.mudar_pagina,		pagina_menu.configuracoes],
+						["SAIR",						menu_acao.mudar_pagina,		pagina_menu.sair]
+					];									
+														
+														
+menu_opcoes =		[									
+						["VOLUME",						menu_acao.slider,			mudar_volume,		10, [0,10],	ag_bgm],
+						["MODO DA TELA",				menu_acao.alternar,			alternar_tela_cheia, 0, ["MODO JANELA", "TELA CHEIA"]],
+						["VOLTAR",						menu_acao.mudar_pagina,		pagina_menu.principal]
 					];
 
 menu_sair =			[
-						["VOCÊ DESEJA SAIR?",	menu_acao.mensagem],
-						["SIM",					menu_acao.rodar_script,		sair_jogo],
-						["NÃO",					menu_acao.mudar_pagina,		pagina_menu.principal]
+						["VOCÊ DESEJA SAIR?",			menu_acao.mensagem],
+						["SIM",							menu_acao.rodar_script,		sair_jogo],
+						["NÃO",							menu_acao.mudar_pagina,		pagina_menu.principal]
 					];
+
+menu_gameplay =		[
+						["Quer voltar para o menu?",	menu_acao.mensagem],
+						["VOLTAR",						menu_acao.mudar_room,		trans_room,		rm_menu_inicial],
+					];	
 
 
 
 //Salvando todos os menus
-menus = [menu_principal, menu_opcoes, menu_sair]
+menus = [menu_principal, menu_opcoes, menu_sair, menu_gameplay]
 
 //Salvando a seleção de cada menu
 menus_sel = array_create(array_length(menus), 0);

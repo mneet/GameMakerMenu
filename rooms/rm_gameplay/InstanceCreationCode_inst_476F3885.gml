@@ -1,0 +1,1 @@
+pag = pagina_menu.gameplay;

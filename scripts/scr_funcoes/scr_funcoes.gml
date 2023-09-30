@@ -4,7 +4,21 @@ function scr_funcoes(){
 
 }
 
+enum pagina_menu {
+	principal,
+	configuracoes,
+	sair,
+	gameplay
+}
 
+enum menu_acao {
+	rodar_script,
+	mudar_pagina,
+	slider,
+	alternar,
+	mensagem,
+	mudar_room
+}
 
 //Define align
 ///@function define_align(vertical, horizontal)
@@ -36,9 +50,10 @@ function valor_ac(_anim, _animar = false, _chan = 0)
 	return _val;
 }
 
-function iniciar_jogo()
+function trans_room(_dest)
 {
-	show_debug_message("inicio o jogo");	
+	var _trans = instance_create_layer(x,y, layer, obj_transicao);
+	_trans.destino = _dest;
 }
 
 function sair_jogo()
